@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Day Planner</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #planner {
+      max-width: 800px;
+      margin: 20px auto;
+    }
+
+    .time-block {
+      display: flex;
+      margin: 10px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .hour {
+      width: 100px;
+      padding: 15px;
+      background-color: #d1d5db;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .description {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      resize: none;
+    }
+
+    .past { background-color: #e0e0e0; }
+    .present { background-color: #ffeb3b; }
+    .future { background-color: #c8e6c9; }
+
+    .saveBtn {
+      width: 60px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .saveBtn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🗓️ Day Planner</h1>
+    <p id="date"></p>
+  </header>
+
+  <div id="planner"></div>
+
+  <script>
+    const planner = document.getElementById("planner");
+    const dateEl = document.getElementById("date");
+
+    const currentHour = new Date().getHours();
+    const hours = [
+      "9 AM", "10 AM", "11 AM", "12 PM", "1 PM",
+      "2 PM", "3 PM", "4 PM", "5 PM"
+    ];
+
+    // Display today's date
+    dateEl.textContent = new Date().toDateString();
+
+    hours.forEach((label, i) => {
+      const hourValue = i + 9; // 9AM = 9
+      const savedTask = localStorage.getItem(`hour-${hourValue}`) || "";
+
+      const timeBlock = document.createElement("div");
+      timeBlock.classList.add("time-block");
+
+      const hour = document.createElement("div");
+      hour.className = "hour";
+      hour.textContent = label;
+
+      const textarea = document.createElement("textarea");
+      textarea.className = `description ${
+        hourValue < currentHour
+          ? "past"
+          : hourValue === currentHour
+          ? "present"
+          : "future"
+      }`;
+      textarea.value = savedTask;
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className = "saveBtn";
+      saveBtn.textContent = "💾";
+      saveBtn.onclick = () => {
+        localStorage.setItem(`hour-${hourValue}`, textarea.value);
+        alert("Saved!");
+      };
+
+      timeBlock.appendChild(hour);
+      timeBlock.appendChild(textarea);
+      timeBlock.appendChild(saveBtn);
+
+      planner.appendChild(timeBlock);
+    });
+  </script>
+</body>
+</html>
